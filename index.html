@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script>
+        let timer;
+        function setTimer(interval) {
+            return setInterval(() => {
+                $.ajax({
+                    url: "https://ethercalc.net/_/r9equ6qogax3/cells/"+"A1",
+                    type: 'GET',
+                    contentType: "application/json",
+                    success: function(data) {
+                        document.getElementById("A1").value = data["datavalue"];
+                    }
+                })
+            }, interval);
+        }
+        function changeVal(obj) {
+            $.ajax({
+                url: "https://ethercalc.net/_/r9equ6qogax3/cells/"+obj.id,
+                type: 'GET',
+                contentType: "application/json",
+                success: function(data) {
+                    if (data["datavalue"] !== obj.value) {
+                        $.ajax({
+                            url: "https://ethercalc.net/_/r9equ6qogax3",
+                            type: 'POST',
+                            contentType: "application/json",
+                            data: '{"command":"set '+obj.id+' text t '+obj.value+'"}',
+                            success: function(data) {
+                            }
+                        })
+                    }
+                    timer = setTimer(2000);
+                }
+            })
+        }
+        function clickBtn() {
+            clearInterval(timer);
+        }
+        window.onload = () => {
+            timer = setTimer(2000);
+        }
+    </script>
+</head>
+<body>
+    <div style="width:600px; margin-bottom: 20px;">
+        <p>A1 Cell</p>
+        <input id="A1" type="text" onclick="clickBtn()" onblur="changeVal(this)" style="width:300px;">
+    </div>
+    <div style="text-align:center;width:800px;height:450px"><iframe width="800px" height="450px" src="https://ethercalc.net/r9equ6qogax3"/></div>
+</body>
+</html>
+
